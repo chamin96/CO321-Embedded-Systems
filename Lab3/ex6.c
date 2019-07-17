@@ -1,14 +1,13 @@
-#include<avr/io.h>
-#include<avr/interrupt.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define BLINK_DELAY_MS  200
 
-unsigned char counter = 0;
+volatile uint8_t counter = 0;
 
-ISR (TIMER0_OVF_vect)    // Timer1 ISR
+ISR (TIMER0_OVF_vect)    // Timer0 ISR
 {
-  counter++;
+  	counter++;
 	TCNT0 = 6;   // for 1 sec at 16 MHz
 }
 
@@ -21,7 +20,7 @@ int main()
 	TCCR0A = 0x00;
 	TCCR0B = 0x04;  // Timer mode with 256 prescler
 
-	TIMSK0 = 0b00000100 ;   // Enable timer0 overflow interrupt(TOIE0)
+	TIMSK0 = 0b00000001;   // Enable timer0 overflow interrupt(TOIE0)
 
 	sei();        // Enable global interrupts by setting global interrupt enable bit in SREG
 
