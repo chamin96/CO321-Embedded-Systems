@@ -2,17 +2,17 @@
 
 void delay_timer(){
 
-    TCNT0 = 131;
+    TCNT0 = 131;                    // Set initial value
 
-    TCCR0A = 0x00;
-    TCCR0B = 0x04;
+    TCCR0A = 0x00;                  // Timer0 normal mode
+    TCCR0B = 0x04;                  // Timer0 with 1:256 prescaler
 
     while ((TIFR0&0x01)==0);
 
-    TCCR0A = 0x00;
+    TCCR0A = 0x00;                  // Reset Timer0 setings
     TCCR0B = 0x00;
 
-    TIFR0 = 0x01;
+    TIFR0 = 0x01;                   // Clear flag bit
 
 }
 
@@ -21,16 +21,16 @@ int main(void) {
 
 	while (1){
 
-        PORTB = PORTB | (1<<5);
-
         int i;
-        for (i = 0; i < 250; i++) {
+        PORTB = PORTB | (1<<5);     // Turn ON LED
+
+        for (i = 0; i < 250; i++) { // Delay for 500ms
             delay_timer();
         }
 
-        PORTB = PORTB & ~(1<<5);
+        PORTB = PORTB & ~(1<<5);    // Turn OFF LED
 
-        for (i = 0; i < 250; i++) {
+        for (i = 0; i < 250; i++) { // Delay for 500ms
             delay_timer();
         }
 
