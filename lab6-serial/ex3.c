@@ -1,4 +1,5 @@
 #include <avr/io.h>
+#include <ctype.h>
 
 	void usart_init(){
 		UCSR0B = (1<<TXEN0) | (1<<RXEN0);	//enable transmitter & receiver
@@ -11,22 +12,36 @@
 		UDR0 = a;
 	}
 
-	void usart_receive(){
-		while(UCSR0A & (1<<RXC0));	//wait until recieve
-		PORDB = UDR0;
+	unsigned char usart_receive(){
+		while(!(UCSR0A & (1<<RXC0)));	//wait until recieve
+		return UDR0;
 	}
 
-	char caesar(unsigned char p){	//Caesar cipher, key is 3
-		char c = p + 3;
+	unsigned char caesar(unsigned char p){	//Caesar cipher, key is 3
+		unsigned char c;
+		if (p < 91 && p > 64) 	//p is capital
+		{
+			c = (((p - 65) + 3)%26)+97;
+		}
+		else	//p is simple
+		{
+			c = (((p - 97) + 3)%26)+97;
+		}	
+		
 		return c;
 	}
 
 int main()
 {
-    usart_init();
-
+    
+	
     while(1){
-    	//carriage return char = 13
+		usart_init();
+		unsigned char d = usart_receive();
+		if (isalpha(d)){
+			d = caesar(d);
+		}
+		usart_send(d);
     }
 
 	return 0;

@@ -1,4 +1,8 @@
 #include <avr/io.h>
+#include <string.h>
+#include <util/delay.h>
+
+#define DELAY_TIME  1000
 
 	void usart_init(){
 		UCSR0B = (1<<TXEN0) | (1<<RXEN0);	//enable transmitter & receiver
@@ -11,23 +15,26 @@
 		UDR0 = a;
 	}
 
-	void usart_receive(){
-		while(UCSR0A & (1<<RXC0));	//wait until recieve
-		PORDB = UDR0;
+	unsigned char usart_receive(){
+		while(!(UCSR0A & (1<<RXC0)));	//wait until recieve
+		return UDR0;
 	}
 
 int main()
 {
-    unsigned char str[20] = "E15142-E15154-E15187";
-    unsigned char strlength = 20;
+    unsigned char * str = "E15142-Ganindu\nE15154-Chamin\nE15187-Devin\n";
+    unsigned char strlength = strlen(str);
     unsigned char i = 0;
     usart_init();
 
     while(1){
         usart_send(str[i++]);
-        if (i >= strlength)
+        if (i >= strlength){
             i=0;
+            _delay_ms(DELAY_TIME);
+        }       
     }
+
 
 	return 0;
 }
